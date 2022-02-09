@@ -5,6 +5,8 @@
 
 #define XCP_PROTOCOL	XCP_PROTOCOL_CAN
 
+#define	CANFD_SUPPORT
+
 #define	XCP_STANDALONE	1
 
 #define	BYTE_ORDER	CPU_BYTE_ORDER
@@ -170,8 +172,12 @@ directly affect memory consumptions for XCP since the code will
 always allocate XCP_MAX_DTO * XCP_MAX_RXTX_QUEUE bytes for
 data buffers.
 */
-#define XCP_MAX_DTO	8
-#define XCP_MAX_CTO 8
-
+#ifdef CANFD_SUPPORT
+	#define XCP_MAX_DTO	64
+	#define XCP_MAX_CTO 64
+#else
+	#define XCP_MAX_DTO	8
+	#define XCP_MAX_CTO 8
+#endif
 
 #endif /* XCP_CFG_H_ */

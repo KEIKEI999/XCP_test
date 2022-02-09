@@ -148,12 +148,12 @@ void ecu_t1ms_job()
 }
 
 extern uint8_t g_XcpDebugMemory[1024];
-sint16 *g_pwTarget = (sint16*)&g_XcpDebugMemory[0x100];	// LSB:1/256[rad/s]
-sint16 *g_pwInput  = (sint16*)&g_XcpDebugMemory[0x102];	// LSB:1/256[rad/s]
-sint16 *g_pwOutput = (sint16*)&g_XcpDebugMemory[0x104];
+sint32 *g_pwTarget = (sint32*)&g_XcpDebugMemory[0x200];	// LSB:1/65535.0[rad/s]
+sint32 *g_pwInput = (sint32*)&g_XcpDebugMemory[0x204];	// LSB:1/65535.0[rad/s]
+sint32 *g_pwOutput = (sint32*)&g_XcpDebugMemory[0x208];
 
 #define NORMALIZE	100.0
-#define LSB	(1/256.0)
+#define LSB	(1/65535.0)
 
 #define	T1	0.25
 #define dT	0.01
@@ -185,7 +185,7 @@ void ecu_t10ms_job()
 		(float64)dT
 	);
 
-	*g_pwOutput = (sint16)(Output * NORMALIZE / LSB);
+	*g_pwOutput = (sint32)(Output * NORMALIZE / LSB);
 }
 
 void ecu_t100ms_job()

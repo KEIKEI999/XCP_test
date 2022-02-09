@@ -4,8 +4,6 @@
 #include "XcpOnCan_Cbk.h"
 #include "Xcp.h"
 
-//#define	CANFD_SUPPORT
-
 extern void _Sleep(unsigned int ms);
 extern void _timeBeginPeriod(unsigned int ms);
 extern unsigned int _timeGetTime();
@@ -21,6 +19,30 @@ int cycle_cnt;
 
 extern Xcp_ConfigType	g_DefaultConfig;
 
+static uint8 candf_dlc_convert( length )
+{
+	uint8 dlc = 0;
+	if (length <= 8) {
+		dlc = length;
+	}else if (8 < length && length <= 12) {
+		dlc = 9;
+	}else if (12 < length && length <= 16) {
+		dlc = 0xA;
+	}else if (16 < length && length <= 20) {
+		dlc = 0xB;
+	}else if (20 < length && length <= 24) {
+		dlc = 0xC;
+	}else if (24 < length && length <= 32) {
+		dlc = 0xD;
+	}else if (32 < length && length <= 48) {
+		dlc = 0xE;
+	}else if (48 < length && length <= 64) {
+		dlc = 0xF;
+	}
+
+	return dlc;
+}
+
 Std_ReturnType _CanIf_Transmit(PduIdType CanTxPduId, const PduInfoType *PduInfoPtr)
 {
 	size_t i;
@@ -30,6 +52,7 @@ Std_ReturnType _CanIf_Transmit(PduIdType CanTxPduId, const PduInfoType *PduInfoP
 
 #ifdef CANFD_SUPPORT
 	fd = 1;
+	msg.Dlc = candf_dlc_convert(PduInfoPtr->SduLength);
 #endif
 	
 	if (CanTxPduId == 0) {
