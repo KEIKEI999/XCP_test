@@ -142,11 +142,6 @@ void ecu_init()
 	PidControl_start();
 }
 
-void ecu_t1ms_job()
-{
-
-}
-
 extern uint8_t g_XcpDebugMemory[1024];
 sint32 *g_pwTarget = (sint32*)&g_XcpDebugMemory[0x200];	// LSB:1/65535.0[rad/s]
 sint32 *g_pwInput = (sint32*)&g_XcpDebugMemory[0x204];	// LSB:1/65535.0[rad/s]
@@ -156,9 +151,8 @@ sint32 *g_pwOutput = (sint32*)&g_XcpDebugMemory[0x208];
 #define LSB	(1/65535.0)
 
 #define	T1	0.25
-#define dT	0.01
-
-void ecu_t10ms_job()
+#define dT	0.001
+void ecu_t1ms_job()
 {
 	float64 target = (*g_pwTarget) * LSB / NORMALIZE;
 	float64 Input = (*g_pwInput)   * LSB / NORMALIZE;
@@ -186,6 +180,11 @@ void ecu_t10ms_job()
 	);
 
 	*g_pwOutput = (sint32)(Output * NORMALIZE / LSB);
+}
+
+void ecu_t10ms_job()
+{
+
 }
 
 void ecu_t100ms_job()
